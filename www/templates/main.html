@@ -1,0 +1,17 @@
+<ion-view class="main-view">
+	<ion-nav-title ng-click="goSettings()">
+		<b>notes.</b>
+	</ion-nav-title>
+    <ion-nav-buttons side="secondary">
+    	<button class="button icon ion-android-sync custom-icon" ng-show="isLoggedIn" ng-click="synchronize()"></button>
+    	<button class="button icon ion-ios-plus-empty custom-icon" ng-click="newNote()"></button>
+    </ion-nav-buttons>
+    <ion-content padding="true" class="has-header">
+		<ion-list ng-repeat="note in allNotes">
+			<ion-item ng-click="editNote(note.id)" on-hold="onhold=true" on-release="faveNote(note.id,note.favorite,onhold);onhold=false">
+				<span ng-show="note.favorite=='Y'" class="favorite">[*] </span>{{note.title}}
+			</ion-item>
+			<hr>
+		</ion-list>
+    </ion-content>
+</ion-view>

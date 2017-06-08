@@ -1,0 +1,15 @@
+<ion-view class="note-view">
+    <ion-nav-title>
+      <b><input class="title-editor" type="text" ng-model="noteData.title" ng-change="changedNote()"/></b>
+	</ion-nav-title>
+    <ion-nav-buttons side="secondary">
+        <button class="button icon icon ion-ios-checkmark-empty custom-icon" ng-show="State.actual=='edition' && wasModified" ng-click="saveNote()"></button>
+        <button class="button icon icon ion-ios-trash-outline custom-icon" ng-show="State.actual=='edition'" ng-click="removeNote()"></button>
+    	<button class="button icon icon ion-ios-checkmark-empty custom-icon" ng-show="State.actual=='creation'" ng-click="saveNote()"></button>
+    	<button class="button icon icon ion-ios-close-empty custom-icon" ng-click="cancelChanges()"></button>
+    </ion-nav-buttons>
+    <ion-content padding="false" class="has-header">
+	    <textarea style="width:100%" class="writer msd-elastic: \n;" ng-model="noteData.content" ng-change="changedNote()">
+		</textarea>
+    </ion-content>
+</ion-view>

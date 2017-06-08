@@ -1,0 +1,24 @@
+<ion-view class="settings-view">
+	<ion-nav-title>
+		<b>settings.</b>
+	</ion-nav-title>
+    <ion-nav-buttons side="secondary">
+    	<button class="button icon icon ion-ios-close-empty custom-icon" ng-click="backToMain()"></button>
+    </ion-nav-buttons>
+    <ion-content padding="true" class="has-header">
+		<ion-list>
+			<hr class="hr-settings"/>
+			<ion-item ng-click="changeMode()">{{settingsData.mode==='day'?'night':'day'}} mode</ion-item>
+			<hr class="hr-settings"/>
+			<ion-item ng-show="!settingsData.loggedIn" ng-click="goLogin()">login</ion-item>
+			<hr ng-show="!settingsData.loggedIn" class="hr-settings"/>
+			<ion-item ng-show="!settingsData.loggedIn" ng-click="goRegister()">register</ion-item>
+			<hr ng-show="!settingsData.loggedIn" class="hr-settings"/>
+			<ion-item ng-show="!settingsData.loggedIn" ng-click="customServer()">custom server</ion-item>
+			<hr ng-show="!settingsData.loggedIn" class="hr-settings"/>
+			<ion-item ng-show="settingsData.loggedIn" ng-click="logout()">logout</ion-item>
+			<hr ng-show="settingsData.loggedIn" class="hr-settings"/>
+			<ion-item ng-show="settingsData.loggedIn"><span class="settings-username">(logged in as <span class="italic-text">{{settingsData.username}}</span>)</span></ion-item>
+		</ion-list>
+    </ion-content>
+</ion-view>

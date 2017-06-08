@@ -1,0 +1,20 @@
+<ion-view class="login-view">
+	<ion-nav-title>
+		<b>login.</b>
+	</ion-nav-title>
+    <ion-nav-buttons side="secondary">
+    	<button class="button icon icon ion-ios-close-empty custom-icon" ng-click="cancelLogin()"></button>
+    </ion-nav-buttons>
+    <ion-content padding="true" class="has-header">
+		<div align="center">
+			<hr class="separator-20"/>
+			<input type="text" autocapitalize="none" class="login-input" placeholder="username" ng-model="loginData.username">
+			<hr class="separator-20"/>
+			<input type="password" class="login-input" placeholder="password" ng-model="loginData.password">
+		</div>
+		<hr class="separator-20"/>
+		<div align="center">
+			<button class="button button-block login-button italic-text" ng-click="login()">send</button>
+		</div>
+    </ion-content>
+</ion-view

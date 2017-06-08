@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'NotoSerifRegular';
+    src: url('../lib/ionic/fonts/NotoSerifRegular.eot');
+    src: url('../lib/ionic/fonts/NotoSerifRegular.eot') format('embedded-opentype'),
+         url('../lib/ionic/fonts/NotoSerifRegular.woff2') format('woff2'),
+         url('../lib/ionic/fonts/NotoSerifRegular.woff') format('woff'),
+         url('../lib/ionic/fonts/NotoSerifRegular.ttf') format('truetype'),
+         url('../lib/ionic/fonts/NotoSerifRegular.svg#NotoSerifRegular') format('svg');
+}

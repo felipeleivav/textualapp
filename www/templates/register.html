@@ -1,0 +1,22 @@
+<ion-view class="register-view">
+	<ion-nav-title>
+		<b>register.</b>
+	</ion-nav-title>
+    <ion-nav-buttons side="secondary">
+    	<button class="button icon icon ion-ios-close-empty custom-icon" ng-click="cancelRegister()"></button>
+    </ion-nav-buttons>
+    <ion-content padding="true" class="has-header">
+		<div align="center">
+			<hr class="separator-20"/>
+			<input type="text" autocapitalize="none" class="login-input" placeholder="username" ng-model="registerData.username">
+			<hr class="separator-20"/>
+			<input type="password" class="login-input" placeholder="password" ng-model="registerData.password">
+			<hr class="separator-20"/>
+			<input type="password" class="login-input" placeholder="re-type password" ng-model="registerData.repassword">
+		</div>
+		<hr class="separator-20"/>
+		<div align="center">
+			<button class="button button-block login-button italic-text" ng-click="register()">send</button>
+		</div>
+    </ion-content>
+</ion-view
