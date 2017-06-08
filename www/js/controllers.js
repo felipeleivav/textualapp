@@ -251,7 +251,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 				if (pass===repass) {
 					var userSend = {username:user,password:pass};
 					$http.put(Utils.restEndpoint+'/user',JSON.stringify(userSend)).then(function(res) {
-						console.log(res);
+						//console.log(res);
 						if (res.data=="true") {
 							UI.toast("Registering...");
 							$scope.login().then(function() {
@@ -383,7 +383,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 				var endpoint = $scope.settingsData.endpoint;
 				if (endpoint!=undefined && endpoint!='') {
 					$http.post($scope.settingsData.endpoint+'/meta',"are you the note server?").then(function(res) {
-						console.log(res);
+						//console.log(res);
 						var answer = res.data;
 						if (answer=="yes i am!") {
 							Utils.restEndpoint = $scope.settingsData.endpoint;

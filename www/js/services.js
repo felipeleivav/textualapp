@@ -4,7 +4,7 @@ angular.module('starter.services', ['starter.config','base64'])
     var self = this;
 
     self.db = null;
-    self.devMode = true;
+    self.devMode = false;
 
     self.init = function() {
         self.db = window.openDatabase(DB_CONFIG.name, '1.0', 'database', -1);
@@ -399,9 +399,9 @@ angular.module('starter.services', ['starter.config','base64'])
     var self = this;
 
     self.synchronize = function() {
-        console.log('sync...');
+        //console.log('sync...');
         return $q.all([self.synchronizeFlags(),self.synchronizeAll()]).then(function(result) {
-            console.log('syncd');
+            //console.log('syncd');
         });
     };
 
