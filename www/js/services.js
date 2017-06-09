@@ -31,7 +31,7 @@ angular.module('starter.services', ['starter.config','base64'])
             theEndpoint = 'https://textual.me:8433';
         }
 
-        self.query('INSERT INTO settings (setting_key,setting_value) VALUES (\'endpoint\',\'http://192.168.1.8:8080\')');
+        self.query('INSERT INTO settings (setting_key,setting_value) VALUES (\'endpoint\',\''+theEndpoint+'\')');
         self.query('INSERT INTO settings (setting_key,setting_value) VALUES (\'colorMode\',\'day\')');
     };
 

@@ -1,2 +1,2 @@
 # textualapp
-Ionic-v1-based simple note taking app
+Textual is a simple note taking app based on Ionic v1.

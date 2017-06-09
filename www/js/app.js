@@ -80,12 +80,12 @@ angular.module('starter', ['ngCordova', 'ionic', 'monospaced.elastic', 'starter.
   $urlRouterProvider.otherwise('/main');
 
   $ionicNativeTransitionsProvider.setDefaultTransition({
-    type: 'slide',
-    direction: 'left'
+    type: 'fade',
+    duration: 500
   });
 
   $ionicNativeTransitionsProvider.setDefaultBackTransition({
-    type: 'slide',
-    direction: 'right'
+    type: 'fade',
+    duration: 500
   });
 })
