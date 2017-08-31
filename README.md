@@ -24,4 +24,4 @@ Feature roadmap:
 - Autobackup, import and export options
 
 Any contribution, suggest and bug report welcome to:
-==selknam@gmail.com==
+selknam91@gmail.com
