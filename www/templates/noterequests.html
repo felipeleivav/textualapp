@@ -1,0 +1,26 @@
+<ion-view class="requests-view">
+	<ion-nav-title>
+		<b>note requests.</b>
+	</ion-nav-title>
+    <ion-nav-buttons side="secondary">
+    	<button class="button icon icon ion-ios-close-empty custom-icon" ng-click="backToNote()"></button>
+    </ion-nav-buttons>
+    <ion-content padding="true" class="has-header">
+		<div align="center">
+			<hr class="separator-10"/>
+			<input type="text" autocapitalize="none" class="login-input" placeholder="username" ng-model="reqData.username">
+			<div class="separator-10"></div>
+			<div class="button-bar">
+				<a class="button button-small" ng-click="sendInvitation()">Send invitation</a>
+			</div>
+		</div>
+		<div class="separator-20"></div>
+		<div class="list" ng-repeat="request in requestList">
+			<a class="item item-icon-left">
+				<i class="icon ion-ios-person-outline custom-icon"></i>
+				{{request.external_username}}
+				<span ng-show="request.request_status==0" class="item-note">pending</span>
+			</a>
+		</div>
+    </ion-content>
+</ion-view>

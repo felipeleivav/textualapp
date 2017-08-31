@@ -20,25 +20,35 @@ angular.module('starter', ['ngCordova', 'ionic', 'monospaced.elastic', 'starter.
   });
 })
 
-.run(function(DB, Utils, UI, State, AuthService) {
-  DB.init();
-  State.synchroFlag = true;
-  UI.getColorMode().then(function(colorMode) {
-    UI.mode = colorMode;
-    UI.setMode();
-  });
-  AuthService.isLoggedin().then(function(logged) {
-    if (logged) {
-      AuthService.getUsername().then(function(username) {
-        AuthService.userlogged = username;
+.run(function($q, DB, Utils, UI, State, AuthService) {
+  return DB.init().then(function(res) {
+    var ep = Utils.getEndpoint().then(function(result) {
+      console.log(result);
+      Utils.restEndpoint = result;
+      return AuthService.isLoggedin().then(function(logged) {
+        if (logged) {
+          return AuthService.validateDbUser().then(function(res) {
+            if (res===true || res===false) {
+              return AuthService.getUsername().then(function(username) {
+                AuthService.userlogged = username;
+              });
+            } else if (res===-1) {
+              return AuthService.logout().then(function() {
+                UI.toast("Can't authenticate; logged out");
+              });
+            }
+          });
+        }
       });
-    }
-  });
-  Utils.getEndpoint().then(function(result) {
-    Utils.restEndpoint = result;
-  });
-  UI.getColorMode().then(function(result) {
-    UI.mode = result;
+    });
+    State.synchroFlag = true;
+    var cm = UI.getColorMode().then(function(colorMode) {
+      UI.mode = colorMode;
+      UI.setMode();
+    });
+    return $q.all([ep,cm]).then(function (res) {
+      return 1;
+    })
   });
 })
 
@@ -76,6 +86,18 @@ angular.module('starter', ['ngCordova', 'ionic', 'monospaced.elastic', 'starter.
     templateUrl: 'templates/settings.html',
     controller: 'settingsCtrl'
   })
+
+  .state('requests', {
+    url: "/requests",
+    templateUrl: 'templates/requests.html',
+    controller: 'requestsCtrl'
+  })
+
+  .state('noterequests', {
+    url: "/noterequests",
+    templateUrl: 'templates/noterequests.html',
+    controller: 'noteRequestsCtrl'
+  });
 
   $urlRouterProvider.otherwise('/main');
 

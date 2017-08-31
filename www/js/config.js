@@ -12,7 +12,29 @@ angular.module('starter.config', [])
                 {name: 'content', type: 'text'},
                 {name: 'status_flag', type: 'text'},
                 {name: 'last_update', type: 'text'},
-                {name: 'favorite', type: 'text'}
+                {name: 'favorite', type: 'text'},
+                {name: 'shared', type: 'text'}
+            ]
+        },
+        {
+            name: 'request',
+            columns: [
+                {name: 'id', type: 'integer primary key'},
+                {name: 'rid', type: 'integer'},
+                {name: 'requester_id', type: 'integer'},
+                {name: 'invited_id', type: 'integer'},
+                {name: 'external_username', type: 'text'},
+                {name: 'note_id', type: 'integer'},
+                {name: 'note_rid', type: 'integer'},
+                {name: 'request_status', type: 'integer'}
+            ]
+        },
+        {
+            name: 'pending_request_delete',
+            columns: [
+                {name: 'id', type: 'integer primary key'},
+                {name: 'req_id', type: 'integer'},
+                {name: 'req_rid', type: 'integer'}
             ]
         },
         {

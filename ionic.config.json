@@ -8,7 +8,11 @@
   "watchPatterns": [
     "www/**/*",
     "!www/lib/**/*",
-    "!www/**/*.map"
+    "!www/**/*.map",
+    "scss/**/*"
   ],
-  "type": "ionic1"
+  "type": "ionic1",
+  "integrations": {
+    "cordova": {}
+  }
 }

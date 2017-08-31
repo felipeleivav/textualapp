@@ -1,0 +1,54 @@
+<ion-view class="requests-view">
+	<ion-nav-title>
+		<b>requests.</b>
+	</ion-nav-title>
+    <ion-nav-buttons side="secondary">
+    	<button class="button icon icon ion-ios-close-empty custom-icon" ng-click="backToMain()"></button>
+    </ion-nav-buttons>
+    <ion-content padding="true" class="has-header">
+		<div class="button-bar">
+			<a ng-click="seePending()" class="button" ng-class="displaying=='pending'?'button-selected':''">Pending</a>
+			<a ng-click="seeAccepted()" class="button" ng-class="displaying=='accepted'?'button-selected':''">Accepted</a>
+		</div>
+		<div class="separator-30"></div>
+		<div id="pending-requests" ng-style="{'display':pendingDisplay}">
+			<ion-item ng-repeat="req in pendingExtRequests">
+				<div class="request-desc">{{req.external_username}} is sharing a note with you</div>
+				<div class="separator-10"></div>
+				<div class="button-bar">
+					<a class="button button-small" ng-click="acceptRequest(req.id)">Accept</a>
+					<a class="button button-small" ng-click="declineRequest(req.id)">Decline</a>
+				</div>
+			</ion-item>
+			<ion-item ng-repeat="req in pendingOwnRequests">
+				<div class="request-title">{{req.note_title}}</div>
+				<div class="separator-10"></div>
+				<div class="request-desc">You are sharing a note with {{req.external_username}}</div>
+				<div class="separator-10"></div>
+				<div class="button-bar">
+					<a class="button button-small" ng-click="cancelRequest(req.id)">Cancel request</a>
+				</div>
+			</ion-item>
+		</div>
+		<div id="accepted-requests" ng-style="{'display':acceptedDisplay}">
+			<ion-item ng-repeat="req in acceptedExtRequests">
+				<div class="request-title">{{req.note_title}}</div>
+				<div class="separator-10"></div>
+				<div class="request-desc">Shared by {{req.external_username}}</div>
+				<div class="separator-10"></div>
+				<div class="button-bar">
+					<a class="button button-small" ng-click="declineRequest(req.id)">Decline</a>
+				</div>
+			</ion-item>
+			<ion-item ng-repeat="req in acceptedOwnRequests">
+				<div class="request-title">{{req.note_title}}</div>
+				<div class="separator-10"></div>
+				<div class="request-desc">Sharing with {{req.external_username}}</div>
+				<div class="separator-10"></div>
+				<div class="button-bar">
+					<a class="button button-small" ng-click="revokeRequest(req.id)">Revoke</a>
+				</div>
+			</ion-item>
+		</div>
+    </ion-content>
+</ion-view>
