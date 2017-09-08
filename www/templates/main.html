@@ -3,13 +3,17 @@
 		<b>notes.</b>
 	</ion-nav-title>
     <ion-nav-buttons side="secondary">
-    	<button class="button icon ion-ios-bell-outline custom-icon" ng-show="isLoggedin" ng-click="goRequests()"></button>
+    	<button class="button icon ion-ios-bell-outline custom-icon" ng-class="{'tip-bell':bellNotify==true}" ng-show="isLoggedin" ng-click="goRequests()"></button>
     	<button class="button icon ion-ios-plus-empty custom-icon" ng-click="newNote()"></button>
     </ion-nav-buttons>
     <ion-content padding="true" class="has-header">
 		<ion-list ng-repeat="note in allNotes">
-			<ion-item ng-click="editNote(note.id);$event.preventDefault(); $event.stopPropagation();" on-hold="onhold=true" on-release="faveNote(note.id,note.favorite,onhold);onhold=false">
-				<span ng-show="note.shared=='Y'" class="shared-note">~ </span><span ng-show="note.favorite=='Y'" class="favorite">[*] </span>{{note.title}}
+			<ion-item ng-click="editNote(note.id);$event.preventDefault();$event.stopPropagation();" on-hold="onhold=true" on-release="faveNote(note.id,note.favorite,onhold);onhold=false">
+				<span ng-show="note.tip" class="tip-note">! </span>
+				<span ng-show="note.owner=='Y'" class="owner-note">~ </span>
+				<span ng-show="note.shared=='Y'" class="shared-note">~ </span>
+				<span ng-show="note.favorite=='Y'" class="favorite">[*] </span>
+				{{note.title}}
 			</ion-item>
 			<hr>
 		</ion-list>

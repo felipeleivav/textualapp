@@ -9852,7 +9852,15 @@ ion-list:last-of-type hr {
   font-weight: bold;
   color: #FFA500; }
 
+.tip-note {
+  font-weight: bold;
+  color: #33FF33; }
+
 .shared-note {
+  font-weight: bold;
+  color: #ddd; }
+
+.owner-note {
   font-weight: bold;
   color: #6868CC; }
 

@@ -1,23 +1,37 @@
 angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-native-transitions'])
 
-.controller('mainCtrl', function($scope, $location, $ionicNativeTransitions, $cordovaVibration, $ionicPopup, Utils, State, NoteService, AuthService, NoteREST, RequestREST, UI, $css) {
+.controller('mainCtrl', function($scope, $q, $location, $ionicNativeTransitions, $cordovaVibration, $ionicPopup, Utils, State, NoteService, NoteTipService, RequestService, AuthService, NoteREST, RequestREST, UI, $css) {
 
 	$scope.allNotes = [];
 	$scope.isLoggedin = false;
-
-	$scope.syncIfAuth = function() {
-		AuthService.isLoggedin().then(function(logged) {
-			if (logged) {
-				NoteREST.synchronize().then(function() {
-					$scope.loadNotes();
-				});
-			}
-		});
-	};
+	$scope.bellNotify = false;
 
 	$scope.loadNotes = function() {
 		NoteService.getAllNotes().then(function (notes) {
- 			$scope.allNotes=notes;
+			NoteTipService.getAllTips().then(function(tips) {
+				var ownCheck = [];
+				for (var i=0;i<notes.length;i++) {
+					if (notes[i].tip===undefined) notes[i].tip=false;
+					for (var j=0;j<tips.length;j++) {
+						if (notes[i].rid==tips[j].note_rid) {
+							notes[i].tip=true;
+							break;
+						}
+					}
+					ownCheck.push(RequestService.isSharedAndOwner(notes[i].rid));
+				}
+				$q.all(ownCheck).then(function(noteCheck) {
+					for (var k=0;k<noteCheck.length;k++) {
+						for (var l=0;l<notes.length;l++) {
+							if (noteCheck[k].note_rid==notes[l].rid && noteCheck[k].owner) {
+								console.log('test');
+								notes[l].owner='Y';
+							}
+						}
+					}
+					$scope.allNotes=notes;
+				});
+			});
 		});
 	};
 
@@ -35,14 +49,14 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 	$scope.goSettings = function() {
 		$ionicNativeTransitions.locationUrl('/settings', {
 			"type": "fade",
-			"duration": 500 
+			"duration": 100 
 		});
 	};
 
 	$scope.goRequests = function() {
 		$ionicNativeTransitions.locationUrl('/requests', {
 			"type": "fade",
-			"duration": 500 
+			"duration": 100 
 		});
 	};
 
@@ -82,10 +96,13 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 	};
 
 	$scope.$on("$ionicView.beforeEnter", function(event, data) {
-	    return Utils.getEndpoint().then(function(result) {
+	    Utils.getEndpoint().then(function(result) {
 			Utils.restEndpoint = result;
       		$scope.loadNotes();
 			$scope.isLoggedin = false;
+			UI.getBellTip().then(function(val) {
+				$scope.bellNotify = val=="ON"?true:false;
+			});
 			return AuthService.isLoggedin().then(function(logged) {
 				if (logged) $scope.isLoggedin = true;
 				//if (State.synchroFlag && logged) { //sync only when opening app
@@ -104,7 +121,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 
 })
 
-.controller('noteCtrl', function($scope, $location, $ionicNativeTransitions, $ionicPopup, State, NoteService, NoteREST, AuthService, UI) {
+.controller('noteCtrl', function($scope, $location, $ionicNativeTransitions, $ionicPopup, State, NoteService, NoteTipService, NoteREST, AuthService, UI) {
 	
 	$scope.noteData = {};
 	$scope.State = State;
@@ -113,7 +130,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 	$scope.shareNote = function() {
 		$ionicNativeTransitions.locationUrl('/noterequests', {
 			"type": "fade",
-			"duration": 500
+			"duration": 100
 		});
 	};
 
@@ -194,7 +211,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 		$location.path('main');
 		$ionicNativeTransitions.locationUrl('/main', {
 			"type": "fade",
-			"duration": 500
+			"duration": 100
 		});
 	};
 
@@ -209,6 +226,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 			NoteService.getSingleNote(State.noteId).then(function(note) {
 				$scope.noteData = note;
 				$scope.editingCopy = NoteService.copyNote(note);
+				NoteTipService.removeTip(note.rid);
 			});
 		}
 	});
@@ -225,7 +243,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 		//$location.path('main');
 		$ionicNativeTransitions.locationUrl('/settings', {
 			"type": "fade",
-			"duration": 500
+			"duration": 100
 		});
 	};
 
@@ -248,7 +266,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 								State.synchroFlag = true;
 								$ionicNativeTransitions.locationUrl('/main', {
 									"type": "fade",
-									"duration": 500
+									"duration": 100
 								});
 							}
 							$scope.processing = false;
@@ -280,7 +298,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 		//$location.path('main');
 		$ionicNativeTransitions.locationUrl('/settings', {
 			"type": "fade",
-			"duration": 500
+			"duration": 100
 		});
 	};
 
@@ -358,7 +376,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 		//$location.path('main');
 		$ionicNativeTransitions.locationUrl('/main', {
 			"type": "fade",
-			"duration": 500
+			"duration": 100
 		});
 	};
 
@@ -473,7 +491,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 	$scope.backToMain = function() {
 		$ionicNativeTransitions.locationUrl('/main', {
 			"type": "fade",
-			"duration": 500
+			"duration": 100
 		});
 	};
 
@@ -572,6 +590,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 	};
 
 	$scope.$on("$ionicView.beforeEnter", function(event, data) {
+		UI.setBellTip(false);
 		$scope.loadRequests();
 	});
 
@@ -585,7 +604,7 @@ angular.module('starter.controllers',  ['starter.services','angularCSS','ionic-n
 	$scope.backToNote = function() {
 		$ionicNativeTransitions.locationUrl('/note', {
 			"type": "fade",
-			"duration": 500
+			"duration": 100
 		});
 	};
 

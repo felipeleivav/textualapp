@@ -103,11 +103,11 @@ angular.module('starter', ['ngCordova', 'ionic', 'monospaced.elastic', 'starter.
 
   $ionicNativeTransitionsProvider.setDefaultTransition({
     type: 'fade',
-    duration: 500
+    duration: 100
   });
 
   $ionicNativeTransitionsProvider.setDefaultBackTransition({
     type: 'fade',
-    duration: 500
+    duration: 100
   });
 })
