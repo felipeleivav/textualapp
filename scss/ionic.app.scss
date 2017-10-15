@@ -70,7 +70,17 @@ ion-list:last-of-type hr {
 	color:#FFA500;
 }
 
+.tip-note {
+	font-weight:bold;
+	color:#33FF33;
+}
+
 .shared-note {
+	font-weight:bold;
+	color:#ddd;
+}
+
+.owner-note {
 	font-weight:bold;
 	color:#6868CC;
 }
@@ -132,4 +142,8 @@ ion-list:last-of-type hr {
 .separator-5 {
 	height:5px;
 	border:none;
+}
+
+.button-positive {
+	background-color:#444 !important;
 }

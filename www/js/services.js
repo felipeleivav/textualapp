@@ -138,7 +138,7 @@ angular.module('starter.services', ['starter.config','base64'])
     };
 
     self.getAllNotes = function() {
-        var query = 'SELECT id,title,content,favorite,shared FROM note WHERE status_flag != \'D\' OR status_flag IS NULL ORDER BY favorite DESC';
+        var query = 'SELECT id,rid,title,content,favorite,shared FROM note WHERE status_flag != \'D\' OR status_flag IS NULL ORDER BY favorite DESC';
         return DB.query(query).then(function(result) {
             return DB.getAllRows(result, self.rowToObj);
         });
@@ -319,6 +319,47 @@ angular.module('starter.services', ['starter.config','base64'])
     return self;
 })
 
+.factory('NoteTipService', function(DB,$q) {
+    var self = this;
+
+    self.getAllTips = function() {
+        var query = 'SELECT id,note_rid FROM note_tip';
+        return DB.query(query).then(function(result) {
+            return DB.getAllRows(result, self.rowToObj);
+        });
+    };
+
+    self.createTip = function(noteRid) {
+        var query = 'INSERT INTO note_tip (note_rid) VALUES(?)';
+        return DB.query(query,[noteRid]).then(function(result) {
+            return result.rowsAffected;
+        });
+    };
+
+    self.removeTip = function(noteRid) {
+        var query = 'DELETE FROM note_tip WHERE note_rid=?';
+        return DB.query(query,[noteRid]).then(function(result) {
+            return result.rowsAffected;
+        });
+    };
+
+    self.objToRow = function(tipObj) {
+        var row = [];
+        row.push(tipObj.id);
+        row.push(tipObj.note_rid);
+        return row;
+    };
+
+    self.rowToObj = function(tipRow) {
+        var obj = {};
+        obj.id = tipRow.id;
+        obj.note_rid = tipRow.note_rid;
+        return obj;
+    };
+
+    return self;
+})
+
 .factory('AuthService', function($q, DB, $base64, $http, Utils){
     var self = this;
 
@@ -338,6 +379,16 @@ angular.module('starter.services', ['starter.config','base64'])
                 self.loggedIn = false;
                 return false;
             }
+        });
+    };
+
+    self.getLocalUserId = function() {
+        var query = 'SELECT setting_value FROM settings WHERE setting_key=?';
+        return DB.query(query,['user_id']).then(function(result) {
+            if (result.rows.length>0) {
+                var userId = result.rows.item(0).setting_value;
+                return userId;
+            } else return 0;
         });
     };
 
@@ -510,7 +561,7 @@ angular.module('starter.services', ['starter.config','base64'])
     return self;
 })
 
-.factory('NoteREST', function($http, $q, NoteService, AuthService, Utils) {
+.factory('NoteREST', function($http, $q, NoteService, NoteTipService, AuthService, Utils) {
     var self = this;
 
     self.synchronize = function() {
@@ -630,6 +681,7 @@ angular.module('starter.services', ['starter.config','base64'])
                             updatedNote.last_update = remoteNote.lastUpdate;
                             updatedNote.rid = remoteNote.id;
                             updateLocal.push(NoteService.updateExistingNoteByRid(updatedNote));
+                            updateLocal.push(NoteTipService.createTip(updatedNote.rid));
                         }
                         return $q.all(updateLocal);
                     });
@@ -662,6 +714,18 @@ angular.module('starter.services', ['starter.config','base64'])
         var query = 'SELECT id,rid,requester_id,invited_id,external_username,note_id,note_rid,request_status FROM request WHERE note_rid=?';
         return DB.query(query,[noteRid]).then(function(result) {
             return DB.getAllRows(result, self.rowToObj);
+        });
+    };
+
+    self.isSharedAndOwner = function(noteRid) {
+        return AuthService.getLocalUserId().then(function(userId) {
+            var query = 'SELECT id FROM request WHERE note_rid=? AND request_status=1 AND requester_id=?';
+            return DB.query(query,[noteRid,userId]).then(function(result) {
+                var ret = {};
+                ret.note_rid=noteRid;
+                ret.owner=result.rows.length>0
+                return ret;
+            });
         });
     };
 
@@ -820,7 +884,7 @@ angular.module('starter.services', ['starter.config','base64'])
 })
 
 
-.factory('RequestREST', function(DB,$http,$q,Utils,AuthService,RequestService,NoteService,NoteREST) {
+.factory('RequestREST', function(DB,$http,$q,Utils,AuthService,RequestService,NoteService,NoteREST,UI) {
     var self = this;
 
     self.obtainedRequests = [];
@@ -838,12 +902,18 @@ angular.module('starter.services', ['starter.config','base64'])
             }
             return $q.all(searchReq).then(function(reqs) {
                 var updAndInsRequests = [];
+                var bell = false;
                 for (var j=0;j<reqs.length;j++) {
                     if (!reqs[j].found) {
+                        //TODO: generar tip en la campanita
+                        bell=true;
                         updAndInsRequests.push(RequestService.saveRequestFromRest(reqs[j]));
                     } else if (reqs[j].requestStatus==Utils.ACCEPTED) {
                         updAndInsRequests.push(RequestService.updateRequest(reqs[j]));
                     }
+                }
+                if (bell) {
+                    $q.all(UI.setBellTip(true));
                 }
                 return $q.all(updAndInsRequests).then(function(updReqs) {
                     return AuthService.getUserId().then(function(userId) {
@@ -1075,7 +1145,7 @@ angular.module('starter.services', ['starter.config','base64'])
             noBackdrop: true,
             duration: (duration == 'short' ? 700 : 1500)
         });
-    }
+    };
 
     this.getColorMode = function() {
         var query = 'SELECT setting_value FROM settings WHERE setting_key=\'colorMode\'';
@@ -1112,6 +1182,34 @@ angular.module('starter.services', ['starter.config','base64'])
                 StatusBar.backgroundColorByHexString('#444');
             }
         }
+    };
+
+    this.setBellTip = function(status) {
+        var query = 'UPDATE settings SET setting_value=? WHERE setting_key=?';
+        return DB.query(query,[(status?'ON':'OFF'),'belltip']).then(function(result) {
+            if (result.rowsAffected==0) {
+                var query = 'INSERT INTO settings (setting_key,setting_value) VALUES(?,?)';
+                return DB.query(query,['belltip',(status?'ON':'OFF')]).then(function(result) {
+                    return result.rowsAffected;
+                });
+            } else {
+                return result.rowsAffected;
+            }
+        });
+    };
+
+    this.getBellTip = function() {
+        var query = 'SELECT setting_value FROM settings WHERE setting_key=?';
+        return DB.query(query,['belltip']).then(function(result) {
+            if (result.rows.length==0) {
+                var query = 'INSERT INTO settings (setting_key,setting_value) VALUES(?,?)';
+                return DB.query(query,['belltip','OFF']).then(function(result) {
+                    return 'OFF';
+                });
+            } else {
+                return result.rows.item(0).setting_value;
+            }
+        });
     };
 
 })

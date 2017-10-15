@@ -38,6 +38,13 @@ angular.module('starter.config', [])
             ]
         },
         {
+            name: 'note_tip',
+            columns: [
+                {name: 'id', type: 'integer primary key'},
+                {name: 'note_rid', type: 'integer'}
+            ]
+        },
+        {
             name: 'settings',
             columns: [
                 {name: 'setting_key', type: 'text'},
